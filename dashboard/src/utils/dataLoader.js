@@ -3,7 +3,13 @@ import { format, parseISO, subDays, startOfDay, endOfDay } from 'date-fns';
 
 export const loadCyberData = async () => {
   try {
-    const response = await fetch('/enhanced_data.csv');
+    // Try to load enhanced_data_v2.csv first, fallback to enhanced_data.csv
+    let response = await fetch('/enhanced_data_v2.csv');
+    if (!response.ok) {
+      console.log('enhanced_data_v2.csv not found, trying enhanced_data.csv');
+      response = await fetch('/enhanced_data.csv');
+    }
+    
     const csvText = await response.text();
     
     const parsed = Papa.parse(csvText, {
@@ -20,13 +26,20 @@ export const loadCyberData = async () => {
       timestamp: typeof row.timestamp === 'string' ? parseISO(row.timestamp) : new Date(),
       risk_score: parseFloat(row.max_abs_z) || 0,
       risk_category: row.risk_category || 'Normal/Moderate',
-      event_id: parseInt(row.event_id) || 0
+      event_id: parseInt(row.event_id) || 0,
+      // Add new enhanced fields if they exist
+      detailed_description: row.detailed_description || row.event_description || '',
+      anomaly_type: row.anomaly_type || 'Unknown',
+      attack_stage: row.attack_stage || '',
+      investigation_priority: parseInt(row.investigation_priority) || 3,
+      threat_indicators: row.threat_indicators || '',
+      recommended_action: row.recommended_action || ''
     }));
 
     console.log('Processed data sample:', data[0]);
     const result = processData(data);
     console.log('Dashboard data:', result);
-    return result;
+    return { ...result, allLogs: data }; // Include all logs for the logs viewer
   } catch (error) {
     console.error('Error loading data:', error);
     return generateMockData();
@@ -214,6 +227,7 @@ const generateMockData = () => {
         description: 'Suspicious process execution - Unknown binary launched'
       }
     ],
-    totalEvents: 1428
+    totalEvents: 1428,
+    allLogs: []
   };
 };

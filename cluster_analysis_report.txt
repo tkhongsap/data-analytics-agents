@@ -1,0 +1,118 @@
+============================================================
+CLUSTER ANALYSIS REPORT
+============================================================
+Generated: 2025-09-04 06:22:02
+
+COMPUTER ACCOUNTS CLUSTERING
+----------------------------------------
+Total Events: 1371
+Unique Clusters: 6
+Cluster Distribution: {0: 270, 1: 260, 2: 309, 4: 141, 3: 309, 5: 82}
+
+Cluster Descriptions Distribution:
+  - Lateral_Movement_Indicators: 300 events
+  - Suspicious_Authentication_Pattern: 260 events
+  - Moderate_Risk_Events: 248 events
+  - Critical_Persistent_Threats: 199 events
+  - Baseline_Activity: 141 events
+  - Outlier_Extreme_Risk: 82 events
+  - High_Risk_Authentication: 71 events
+  - System_Process_Anomalies: 61 events
+  - Network_Reconnaissance: 9 events
+
+Cluster Details:
+
+Cluster 0: Critical_Persistent_Threats
+  Size: 270 events
+  Avg Anomaly Score: 23.19
+  Unique Users: 1
+  Unique Hosts: 1
+  Top Event Types: [('4634', 270)]
+
+Cluster 1: Suspicious_Authentication_Pattern
+  Size: 260 events
+  Avg Anomaly Score: 23.94
+  Unique Users: 2
+  Unique Hosts: 3
+  Top Event Types: [('4624', 260)]
+
+Cluster 2: Moderate_Risk_Events
+  Size: 309 events
+  Avg Anomaly Score: 12.12
+  Unique Users: 4
+  Unique Hosts: 3
+  Top Event Types: [('4634', 309)]
+
+Cluster 3: Lateral_Movement_Indicators
+  Size: 309 events
+  Avg Anomaly Score: 12.08
+  Unique Users: 4
+  Unique Hosts: 3
+  Top Event Types: [('4624', 309)]
+
+Cluster 4: Baseline_Activity
+  Size: 141 events
+  Avg Anomaly Score: 8.73
+  Unique Users: 99
+  Unique Hosts: 7
+  Top Event Types: [('4624', 72), ('4634', 69)]
+
+Cluster 5: Outlier_Extreme_Risk
+  Size: 82 events
+  Avg Anomaly Score: 18.7
+  Unique Users: 4
+  Unique Hosts: 6
+  Top Event Types: [('4672', 27), ('4624', 18), ('4689', 14)]
+
+============================================================
+USER ACCOUNTS CLUSTERING
+----------------------------------------
+Total Events: 58
+Unique Clusters: 4
+Cluster Distribution: {0: 16, 2: 4, 3: 37, 1: 1}
+
+Cluster Descriptions Distribution:
+  - Baseline_User_Behavior: 33 events
+  - Normal_User_Activity: 16 events
+  - Session_Management_Issues: 4 events
+  - Critical_User_Breach: 3 events
+  - Suspicious_User_Behavior: 2 events
+
+Cluster Details:
+
+Cluster 0: Normal_User_Activity
+  Size: 16 events
+  Avg Anomaly Score: 9.05
+  Unique Users: 15
+  Unique Hosts: 6
+  Top Event Types: [('4634', 10), ('4624', 6)]
+
+Cluster 1: Critical_User_Breach
+  Size: 1 events
+  Avg Anomaly Score: 75.86
+  Unique Users: 1
+  Unique Hosts: 1
+  Top Event Types: [('4624', 1)]
+
+Cluster 2: Session_Management_Issues
+  Size: 4 events
+  Avg Anomaly Score: 8.95
+  Unique Users: 4
+  Unique Hosts: 4
+  Top Event Types: [('4624', 4)]
+
+Cluster 3: Baseline_User_Behavior
+  Size: 37 events
+  Avg Anomaly Score: 10.02
+  Unique Users: 33
+  Unique Hosts: 7
+  Top Event Types: [('4634', 18), ('4624', 16), ('4689', 3)]
+
+============================================================
+SECURITY RECOMMENDATIONS
+----------------------------------------
+1. Investigate all 'Outlier_Extreme_Risk' and 'Critical' clusters immediately
+2. Review 'Privilege_Escalation_Activity' for potential insider threats
+3. Monitor 'Network_Reconnaissance' for potential attack preparation
+4. Baseline 'Normal' clusters for anomaly detection improvements
+5. Correlate user and computer account clusters for comprehensive threat view
