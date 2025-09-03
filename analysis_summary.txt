@@ -1,0 +1,86 @@
+
+Windows Security Event Log Analysis Summary
+==========================================
+
+Analysis Date: 2025-09-04 05:11:18
+Dataset: dfp_detections_azure7Days_samplepercentfiltered.csv
+
+EXECUTIVE SUMMARY
+-----------------
+This analysis processed 1,429 Windows security events to identify anomalous behavior
+and potential security threats. The analysis focuses on logon/logoff activities, 
+process events, and privilege assignments across multiple Windows servers.
+
+KEY FINDINGS
+------------
+• Total Events Analyzed: 1,429
+• Date Range: 2025-08-24T02:04:12.231000000Z to 2025-08-27T07:46:51.280000000Z
+• Unique Users: 153
+• Unique Hosts: 7
+
+ANOMALY STATISTICS
+------------------
+• Maximum Anomaly Score: 75.86
+• Mean Anomaly Score: 16.34
+• Median Anomaly Score: 14.75
+
+RISK LEVEL DISTRIBUTION
+-----------------------
+• Critical: 442 events (30.9%)
+• High Risk: 564 events (39.5%)
+• Normal/Moderate: 423 events (29.6%)
+
+EVENT TYPE BREAKDOWN
+--------------------
+• Account Logoffs: 687 (48.1%)
+• Successful Logons: 686 (48.0%)
+• Special Privileges Assigned: 27 (1.9%)
+• Process Terminations: 17 (1.2%)
+• New Processes Created: 12 (0.8%)
+
+TOP 10 MOST ANOMALOUS EVENTS
+-----------------------------
+ 1. Score:  75.86 | 2025-08-26T03:37:17 | ANONYMOUS LOGON | Event 4624
+ 2. Score:  50.65 | 2025-08-26T23:31:21 | STBVADC01$      | Event 4672
+ 3. Score:  50.50 | 2025-08-26T23:19:04 | STBVADC01$      | Event 4672
+ 4. Score:  50.30 | 2025-08-26T23:00:01 | STBVADC01$      | Event 4688
+ 5. Score:  50.29 | 2025-08-26T22:58:55 | STBVADC01$      | Event 4624
+ 6. Score:  49.91 | 2025-08-26T22:20:50 | STBVADC01$      | Event 4634
+ 7. Score:  49.88 | 2025-08-26T22:17:29 | STBVADC01$      | Event 4634
+ 8. Score:  41.88 | 2025-08-26T21:37:29 | STBVADC01$      | Event 4634
+ 9. Score:  41.61 | 2025-08-26T21:07:44 | STBVADC01$      | Event 4689
+10. Score:  41.32 | 2025-08-26T20:34:08 | STBVADC01$      | Event 4634
+
+TOP 5 USERS BY MAXIMUM ANOMALY SCORE
+-------------------------------------
+• ANONYMOUS LOGON     :    2 events, max score  75.86
+• STBVADC01$          :   68 events, max score  50.65
+• LOCAL SERVICE       :    3 events, max score  41.18
+• STBVDRADC01$        :   23 events, max score  32.17
+• TBQPF45YEK2$        : 1106 events, max score  30.56
+
+TOP 5 HOSTS BY MAXIMUM ANOMALY SCORE  
+-------------------------------------
+• STBVADC04           :   30 events, max score  75.86
+• STBVADC01           :   87 events, max score  50.65
+• STBVADC02           :   34 events, max score  50.29
+• STBVADC05           :   45 events, max score  41.18
+• STBVDRADC01         : 1156 events, max score  41.07
+
+RECOMMENDATIONS
+---------------
+1. Investigate events with Critical risk scores (≥20) immediately
+2. Review High risk events (10-20) for potential security threats  
+3. Focus on users and hosts with highest anomaly scores
+4. Consider implementing additional monitoring for network logons (Type 3)
+5. Review special privilege assignments (Event 4672) carefully
+
+TECHNICAL NOTES
+---------------
+• Anomaly scores are based on z-score normalization of multiple metrics
+• Events are classified using Windows Event IDs and logon type codes
+• Risk categories: Normal/Moderate (<10), High Risk (10-20), Critical (≥20)
+• Analysis includes logon patterns, host activity, IP addresses, and process behavior
+
+For questions about this analysis, please refer to the enhanced dataset:
+enhanced_data.csv
