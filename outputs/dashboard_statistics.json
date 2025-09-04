@@ -1,0 +1,17 @@
+{
+  "total_events": 1429,
+  "system_events": 1371,
+  "user_events": 58,
+  "critical_count": 499,
+  "high_count": 540,
+  "medium_count": 390,
+  "normal_count": 0,
+  "unique_hosts": 7,
+  "unique_users": 153,
+  "highest_risk_score": 75.85803986,
+  "average_risk_score": 16.343228890023095,
+  "critical_rate": 34.9,
+  "high_rate": 37.8,
+  "system_percentage": 95.9,
+  "user_percentage": 4.1
+}

@@ -11,7 +11,8 @@ import {
   Clock,
   Home,
   FileText,
-  BarChart3
+  BarChart3,
+  TrendingUp
 } from 'lucide-react';
 
 // Components
@@ -21,6 +22,7 @@ import RiskDistribution from './components/RiskDistribution';
 import TopThreats from './components/TopThreats';
 import CriticalEvents from './components/CriticalEvents';
 import LogsViewer from './components/LogsViewer';
+import ForecastingPanel from './components/ForecastingPanel';
 
 // Utils
 import { loadCyberData } from './utils/dataLoader';
@@ -138,6 +140,17 @@ function App() {
             >
               <Home className="w-4 h-4" />
               Overview
+            </button>
+            <button
+              onClick={() => setActiveTab('forecast')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                activeTab === 'forecast'
+                  ? 'bg-gradient-to-r from-purple-500/20 to-purple-600/20 text-purple-400 border border-purple-500/30'
+                  : 'text-gray-400 hover:text-white hover:bg-slate-800/30'
+              }`}
+            >
+              <TrendingUp className="w-4 h-4" />
+              Forecasting
             </button>
             <button
               onClick={() => setActiveTab('logs')}
@@ -298,6 +311,18 @@ function App() {
                   </div>
                 </div>
               </motion.footer>
+            </motion.div>
+          )}
+          
+          {activeTab === 'forecast' && (
+            <motion.div
+              key="forecast"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ForecastingPanel data={dashboardData.allLogs || []} />
             </motion.div>
           )}
           

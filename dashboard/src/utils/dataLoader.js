@@ -3,11 +3,19 @@ import { format, parseISO, subDays, startOfDay, endOfDay } from 'date-fns';
 
 export const loadCyberData = async () => {
   try {
-    // Try to load enhanced_data_v2.csv first, fallback to enhanced_data.csv
-    let response = await fetch('/enhanced_data_v2.csv');
+    // Try to load unified_dashboard_data.csv first (has both system and user accounts)
+    let response = await fetch('/unified_dashboard_data.csv');
     if (!response.ok) {
-      console.log('enhanced_data_v2.csv not found, trying enhanced_data.csv');
-      response = await fetch('/enhanced_data.csv');
+      console.log('unified_dashboard_data.csv not found, trying enhanced_clustered_data.csv');
+      response = await fetch('/enhanced_clustered_data.csv');
+      if (!response.ok) {
+        console.log('enhanced_clustered_data.csv not found, trying enhanced_data_v2.csv');
+        response = await fetch('/enhanced_data_v2.csv');
+        if (!response.ok) {
+          console.log('enhanced_data_v2.csv not found, trying enhanced_data.csv');
+          response = await fetch('/enhanced_data.csv');
+        }
+      }
     }
     
     const csvText = await response.text();
@@ -18,17 +26,26 @@ export const loadCyberData = async () => {
       dynamicTyping: true
     });
 
-    console.log('Parsed CSV rows:', parsed.data.length);
-    console.log('Sample row:', parsed.data[0]);
+    console.log('✓ Parsed CSV rows:', parsed.data.length);
+    console.log('✓ Sample row:', parsed.data[0]);
+    
+    // Log data statistics
+    const systemCount = parsed.data.filter(r => r.account_type === 'System').length;
+    const userCount = parsed.data.filter(r => r.account_type === 'User').length;
+    console.log(`✓ System accounts: ${systemCount}, User accounts: ${userCount}`);
 
     const data = parsed.data.map(row => ({
       ...row,
       timestamp: typeof row.timestamp === 'string' ? parseISO(row.timestamp) : new Date(),
       risk_score: parseFloat(row.max_abs_z) || 0,
-      risk_category: row.risk_category || 'Normal/Moderate',
+      risk_category: row.risk_level || row.risk_category || 'Normal/Moderate',
       event_id: parseInt(row.event_id) || 0,
-      // Add new enhanced fields if they exist
-      detailed_description: row.detailed_description || row.event_description || '',
+      // Add account type separation fields
+      account_type: row.account_type || (row.username && row.username.endsWith('$') ? 'System' : 'User'),
+      account_category: row.account_category || 'Unknown',
+      cluster_description: row.cluster_description || '',
+      // Add enhanced fields if they exist
+      detailed_description: row.alert_description || row.detailed_description || row.event_description || '',
       anomaly_type: row.anomaly_type || 'Unknown',
       attack_stage: row.attack_stage || '',
       investigation_priority: parseInt(row.investigation_priority) || 3,
@@ -36,9 +53,11 @@ export const loadCyberData = async () => {
       recommended_action: row.recommended_action || ''
     }));
 
-    console.log('Processed data sample:', data[0]);
+    console.log('✓ Processed data sample:', data[0]);
     const result = processData(data);
-    console.log('Dashboard data:', result);
+    console.log('✓ Dashboard data metrics:', result.metrics);
+    console.log('✓ Risk distribution:', result.riskDistribution);
+    console.log('✓ Critical events:', result.criticalEvents?.length || 0);
     return { ...result, allLogs: data }; // Include all logs for the logs viewer
   } catch (error) {
     console.error('Error loading data:', error);
@@ -47,11 +66,18 @@ export const loadCyberData = async () => {
 };
 
 const processData = (rawData) => {
-  // Calculate key metrics
+  // Calculate key metrics with account type separation
+  const systemEvents = rawData.filter(d => d.account_type === 'System');
+  const userEvents = rawData.filter(d => d.account_type === 'User');
+  
   const criticalAlerts = rawData.filter(d => d.risk_category === 'Critical').length;
   const highAlerts = rawData.filter(d => d.risk_category === 'High Risk').length;
   const totalAlerts = rawData.length;
   const anomalyRate = ((criticalAlerts + highAlerts) / totalAlerts * 100).toFixed(1);
+  
+  // Account-specific metrics
+  const systemCritical = systemEvents.filter(d => d.risk_category === 'Critical').length;
+  const userCritical = userEvents.filter(d => d.risk_category === 'Critical').length;
   
   // Get unique users and hosts with threats
   const uniqueUsers = new Set(rawData.filter(d => d.risk_category !== 'Normal/Moderate').map(d => d.username)).size;
@@ -102,7 +128,11 @@ const processData = (rawData) => {
       criticalAlerts,
       anomalyRate: parseFloat(anomalyRate),
       activeThreats: uniqueUsers,
-      systemsAtRisk: uniqueHosts
+      systemsAtRisk: uniqueHosts,
+      systemEvents: systemEvents.length,
+      userEvents: userEvents.length,
+      systemCritical,
+      userCritical
     },
     timelineData,
     riskDistribution,
