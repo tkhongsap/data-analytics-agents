@@ -1,0 +1,1547 @@
+{
+  "analysis_metadata": {
+    "generated_at": "2025-09-04T09:51:52.874189",
+    "total_events_analyzed": 1429,
+    "high_risk_events": 442,
+    "risk_threshold_used": 20
+  },
+  "summary_statistics": {
+    "event_id_breakdown": {
+      "Computer Accounts": {
+        "4634": 659,
+        "4624": 659,
+        "4672": 27,
+        "4689": 14,
+        "4688": 12
+      },
+      "User Accounts": {
+        "4634": 28,
+        "4624": 27,
+        "4689": 3
+      }
+    },
+    "high_risk_clusters": {
+      "Critical_User_Breach": 3,
+      "Outlier_Extreme_Risk": 25,
+      "Suspicious_Authentication_Pattern": 215,
+      "Critical_Persistent_Threats": 199
+    },
+    "account_type_breakdown": {
+      "User": 3,
+      "Computer": 439
+    }
+  },
+  "interpretation_mappings": {
+    "event_interpretations": {
+      "4624": {
+        "name": "Successful Account Logon",
+        "normal_behavior": "Users logging in during business hours from known locations",
+        "suspicious_indicators": [
+          "Logons from unusual IP addresses",
+          "Multiple logons from different locations simultaneously",
+          "Service account logons from user workstations",
+          "Logons outside business hours",
+          "High frequency of logons (potential credential stuffing)"
+        ],
+        "attack_context": [
+          "Pass-the-hash attacks",
+          "Credential stuffing/spraying",
+          "Lateral movement",
+          "Account takeover"
+        ],
+        "investigation_steps": [
+          "Verify logon location against user's normal pattern",
+          "Check for corresponding logoff events",
+          "Review source IP geolocation",
+          "Analyze logon type for appropriateness"
+        ],
+        "mitre_attack": [
+          "T1078",
+          "T1110",
+          "T1021"
+        ]
+      },
+      "4625": {
+        "name": "Failed Account Logon",
+        "normal_behavior": "Occasional failed logons due to typos or forgotten passwords",
+        "suspicious_indicators": [
+          "Multiple failures in short timeframe",
+          "Failed logons for disabled accounts",
+          "Failures from unusual locations",
+          "Pattern suggesting password spraying"
+        ],
+        "attack_context": [
+          "Brute force attacks",
+          "Password spraying",
+          "Account enumeration",
+          "Credential stuffing"
+        ],
+        "investigation_steps": [
+          "Count failures per account and source IP",
+          "Check for subsequent successful logons",
+          "Review failure reasons",
+          "Correlate with threat intelligence"
+        ],
+        "mitre_attack": [
+          "T1110.001",
+          "T1110.003",
+          "T1078"
+        ]
+      },
+      "4634": {
+        "name": "Account Logoff",
+        "normal_behavior": "Normal logoff events at end of work sessions",
+        "suspicious_indicators": [
+          "Logoffs without corresponding logons",
+          "Unusual timing patterns",
+          "Service account logoffs from user systems"
+        ],
+        "attack_context": [
+          "Session cleanup after malicious activity",
+          "Evidence of unauthorized access",
+          "Lateral movement cleanup"
+        ],
+        "investigation_steps": [
+          "Correlate with logon events",
+          "Check session duration",
+          "Review activity between logon and logoff"
+        ],
+        "mitre_attack": [
+          "T1078",
+          "T1021"
+        ]
+      },
+      "4688": {
+        "name": "New Process Created",
+        "normal_behavior": "Standard application and service process creation",
+        "suspicious_indicators": [
+          "Unusual executable names or paths",
+          "Processes started by unexpected users",
+          "Command line arguments suggesting malicious intent",
+          "High frequency of process creation"
+        ],
+        "attack_context": [
+          "Malware execution",
+          "Living off the land techniques",
+          "Privilege escalation",
+          "Persistence mechanisms"
+        ],
+        "investigation_steps": [
+          "Analyze command line arguments",
+          "Check process hash against known malware",
+          "Review parent process relationship",
+          "Verify digital signatures"
+        ],
+        "mitre_attack": [
+          "T1059",
+          "T1055",
+          "T1106"
+        ]
+      },
+      "4689": {
+        "name": "Process Terminated",
+        "normal_behavior": "Normal process termination during system operations",
+        "suspicious_indicators": [
+          "Critical processes terminated unexpectedly",
+          "Security tools being killed",
+          "Unusual termination patterns"
+        ],
+        "attack_context": [
+          "Anti-forensics activities",
+          "Defense evasion",
+          "Service disruption",
+          "Covering tracks"
+        ],
+        "investigation_steps": [
+          "Identify what terminated the process",
+          "Check if process was critical for security",
+          "Look for subsequent suspicious activities",
+          "Review process lifetime"
+        ],
+        "mitre_attack": [
+          "T1562",
+          "T1489",
+          "T1070"
+        ]
+      },
+      "4672": {
+        "name": "Special Privileges Assigned",
+        "normal_behavior": "Administrative accounts receiving expected privileges",
+        "suspicious_indicators": [
+          "Regular users receiving admin privileges",
+          "Service accounts getting excessive privileges",
+          "Privilege assignment outside normal hours"
+        ],
+        "attack_context": [
+          "Privilege escalation",
+          "Account compromise",
+          "Persistence mechanisms",
+          "Credential abuse"
+        ],
+        "investigation_steps": [
+          "Verify if privilege assignment was authorized",
+          "Check who granted the privileges",
+          "Review subsequent activities with elevated privileges",
+          "Correlate with change management records"
+        ],
+        "mitre_attack": [
+          "T1078.003",
+          "T1068",
+          "T1134"
+        ]
+      }
+    },
+    "logon_types": {
+      "2": "Interactive (Console/Keyboard)",
+      "3": "Network (Remote Access)",
+      "4": "Batch (Scheduled Task)",
+      "5": "Service",
+      "7": "Unlock",
+      "8": "NetworkCleartext",
+      "9": "NewCredentials",
+      "10": "RemoteInteractive (RDP)",
+      "11": "CachedInteractive"
+    },
+    "cluster_descriptions": {
+      "Normal_User_Activity": {
+        "explanation": "Standard user behavior patterns within expected parameters",
+        "risk_level": "Low",
+        "details": "User activities that match historical baselines and expected patterns"
+      },
+      "Baseline_User_Behavior": {
+        "explanation": "User activities that establish normal behavioral patterns",
+        "risk_level": "Low",
+        "details": "Events used to establish user behavior baselines, generally benign"
+      },
+      "Session_Management_Issues": {
+        "explanation": "Potential problems with user session handling",
+        "risk_level": "Medium",
+        "details": "Sessions that may have unusual duration, timing, or characteristics"
+      },
+      "Suspicious_User_Behavior": {
+        "explanation": "User activities that deviate from normal patterns",
+        "risk_level": "Medium",
+        "details": "Behavior that warrants investigation but may not be malicious"
+      },
+      "Critical_User_Breach": {
+        "explanation": "High-confidence indicators of user account compromise",
+        "risk_level": "Critical",
+        "details": "Strong evidence of unauthorized access or malicious activity"
+      },
+      "Suspicious_Authentication_Pattern": {
+        "explanation": "Login behaviors that suggest potential credential abuse",
+        "risk_level": "High",
+        "details": "Authentication events with unusual timing, frequency, or source patterns"
+      },
+      "Lateral_Movement_Indicators": {
+        "explanation": "Activities suggesting movement between systems",
+        "risk_level": "High",
+        "details": "Authentication or access patterns indicating potential lateral movement"
+      },
+      "Critical_Persistent_Threats": {
+        "explanation": "Evidence of advanced persistent threat activity",
+        "risk_level": "Critical",
+        "details": "Sustained malicious activity suggesting sophisticated threat actor"
+      },
+      "High_Risk_Authentication": {
+        "explanation": "Authentication events with elevated risk factors",
+        "risk_level": "High",
+        "details": "Logon activities with multiple risk indicators"
+      },
+      "System_Process_Anomalies": {
+        "explanation": "Unusual system or service process behavior",
+        "risk_level": "Medium",
+        "details": "System processes acting outside normal parameters"
+      },
+      "Network_Reconnaissance": {
+        "explanation": "Activities suggesting network discovery or scanning",
+        "risk_level": "High",
+        "details": "Behavior patterns indicating network reconnaissance activities"
+      },
+      "Outlier_Extreme_Risk": {
+        "explanation": "Extremely unusual activities requiring immediate attention",
+        "risk_level": "Critical",
+        "details": "Activities that are statistical outliers with very high risk scores"
+      },
+      "Moderate_Risk_Events": {
+        "explanation": "Events with elevated risk but not immediately critical",
+        "risk_level": "Medium",
+        "details": "Activities that warrant monitoring and potential investigation"
+      },
+      "Baseline_Activity": {
+        "explanation": "Standard system and user activities",
+        "risk_level": "Low",
+        "details": "Normal operational activities used for baseline establishment"
+      }
+    },
+    "risk_thresholds": {
+      "low": {
+        "min": 0,
+        "max": 10,
+        "description": "Normal baseline behavior"
+      },
+      "medium": {
+        "min": 10,
+        "max": 20,
+        "description": "Some deviation warranting monitoring"
+      },
+      "medium_high": {
+        "min": 20,
+        "max": 30,
+        "description": "Significant deviation requiring investigation"
+      },
+      "high": {
+        "min": 30,
+        "max": 50,
+        "description": "Extreme deviation indicating potential threats"
+      },
+      "critical": {
+        "min": 50,
+        "max": 1000,
+        "description": "Never-before-seen behavior requiring immediate response"
+      }
+    },
+    "account_type_guidance": {
+      "computer_accounts": {
+        "identification": "Username ending with $",
+        "normal_behavior": "Automated authentication for service-to-service communication",
+        "suspicious_patterns": [
+          "Interactive logons (should be network only)",
+          "Logons from unusual IPs",
+          "High frequency authentication",
+          "Authentication outside service windows"
+        ]
+      },
+      "user_accounts": {
+        "identification": "Standard username without $",
+        "normal_behavior": "Interactive and network logons during business hours",
+        "suspicious_patterns": [
+          "Logons from multiple locations simultaneously",
+          "Authentication outside normal hours",
+          "High frequency failed logons",
+          "Unusual source IP addresses"
+        ]
+      },
+      "service_accounts": {
+        "identification": "LOCAL SERVICE, NETWORK SERVICE, system accounts",
+        "normal_behavior": "Automated system operations",
+        "suspicious_patterns": [
+          "Interactive logons",
+          "Authentication from remote systems",
+          "Unusual process execution"
+        ]
+      },
+      "anonymous_logon": {
+        "identification": "ANONYMOUS LOGON",
+        "normal_behavior": "Limited system access for specific services",
+        "suspicious_patterns": [
+          "High frequency anonymous access",
+          "Access from external IPs",
+          "Unusual timing patterns"
+        ]
+      }
+    }
+  },
+  "critical_events_analysis": [
+    {
+      "rank": 1,
+      "timestamp": "2025-08-26T03:37:17.404000000Z",
+      "username": "ANONYMOUS LOGON",
+      "hostname": "STBVADC04",
+      "event_id": "4624",
+      "z_score": 75.85803986,
+      "cluster": "Critical_User_Breach",
+      "account_type": "User",
+      "source_ip": "10.7.56.170",
+      "detailed_description": "Event: Successful Account Logon - Anonymous logon (potentially suspicious) successful logon (Type 3.0) from internal network (10.7.56.170)\nTime: 2025-08-26 03:37:17 UTC\nHost: STBVADC04\nRisk: CRITICAL (Z-Score: 75.86)\nReason: This behavior has never been observed before and represents an extreme anomaly\n\nContext: High-confidence indicators of user account compromise - Strong evidence of unauthorized access or malicious activity\n\nWhy this is suspicious:\n- Z-score of 75.86 indicates this behavior is 75.9 standard deviations from normal\n- Classified as \"Critical_User_Breach\" suggesting high-confidence indicators of user account compromise\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 2,
+      "timestamp": "2025-08-26T23:31:21.514000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC01",
+      "event_id": "4672",
+      "z_score": 50.64785385,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Special Privileges Assigned - Computer account STBVADC01$ (service/machine account) special privileges assigned \nTime: 2025-08-26 23:31:21 UTC\nHost: STBVADC01\nRisk: CRITICAL (Z-Score: 50.65)\nReason: This behavior has never been observed before and represents an extreme anomaly\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 50.65 indicates this behavior is 50.6 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Special Privileges Assigned events normally involve administrative accounts receiving expected privileges\n\nInvestigation priorities:\n- Verify if privilege assignment was authorized\n- Check who granted the privileges\n- Review subsequent activities with elevated privileges\n- Correlate with change management records\n\nAssociated MITRE ATT&CK techniques: T1078.003, T1068, T1134"
+    },
+    {
+      "rank": 3,
+      "timestamp": "2025-08-26T23:19:04.246000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC01",
+      "event_id": "4672",
+      "z_score": 50.50413513,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Special Privileges Assigned - Computer account STBVADC01$ (service/machine account) special privileges assigned \nTime: 2025-08-26 23:19:04 UTC\nHost: STBVADC01\nRisk: CRITICAL (Z-Score: 50.50)\nReason: This behavior has never been observed before and represents an extreme anomaly\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 50.50 indicates this behavior is 50.5 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Special Privileges Assigned events normally involve administrative accounts receiving expected privileges\n\nInvestigation priorities:\n- Verify if privilege assignment was authorized\n- Check who granted the privileges\n- Review subsequent activities with elevated privileges\n- Correlate with change management records\n\nAssociated MITRE ATT&CK techniques: T1078.003, T1068, T1134"
+    },
+    {
+      "rank": 4,
+      "timestamp": "2025-08-26T23:00:01.879000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC01",
+      "event_id": "4688",
+      "z_score": 50.3040657,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: New Process Created - Computer account STBVADC01$ (service/machine account) process creation (wsqmcons.exe) \nTime: 2025-08-26 23:00:01 UTC\nHost: STBVADC01\nRisk: CRITICAL (Z-Score: 50.30)\nReason: This behavior has never been observed before and represents an extreme anomaly\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 50.30 indicates this behavior is 50.3 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- New Process Created events normally involve standard application and service process creation\n\nInvestigation priorities:\n- Analyze command line arguments\n- Check process hash against known malware\n- Review parent process relationship\n- Verify digital signatures\n\nAssociated MITRE ATT&CK techniques: T1059, T1055, T1106"
+    },
+    {
+      "rank": 5,
+      "timestamp": "2025-08-26T22:58:55.006000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC02",
+      "event_id": "4624",
+      "z_score": 50.29290771,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "10.7.55.11",
+      "detailed_description": "Event: Successful Account Logon - Computer account STBVADC01$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.55.11)\nTime: 2025-08-26 22:58:55 UTC\nHost: STBVADC02\nRisk: CRITICAL (Z-Score: 50.29)\nReason: This behavior has never been observed before and represents an extreme anomaly\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 50.29 indicates this behavior is 50.3 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 6,
+      "timestamp": "2025-08-26T22:20:50.803000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC01",
+      "event_id": "4634",
+      "z_score": 49.91254807,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account STBVADC01$ (service/machine account) account logoff \nTime: 2025-08-26 22:20:50 UTC\nHost: STBVADC01\nRisk: HIGH (Z-Score: 49.91)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 49.91 indicates this behavior is 49.9 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 7,
+      "timestamp": "2025-08-26T22:17:29.259000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC01",
+      "event_id": "4634",
+      "z_score": 49.88119125,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account STBVADC01$ (service/machine account) account logoff \nTime: 2025-08-26 22:17:29 UTC\nHost: STBVADC01\nRisk: HIGH (Z-Score: 49.88)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 49.88 indicates this behavior is 49.9 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 8,
+      "timestamp": "2025-08-26T21:37:29.536000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC01",
+      "event_id": "4634",
+      "z_score": 41.87982559,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account STBVADC01$ (service/machine account) account logoff \nTime: 2025-08-26 21:37:29 UTC\nHost: STBVADC01\nRisk: HIGH (Z-Score: 41.88)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 41.88 indicates this behavior is 41.9 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 9,
+      "timestamp": "2025-08-26T21:07:44.533000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC01",
+      "event_id": "4689",
+      "z_score": 41.61061096,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Process Terminated - Computer account STBVADC01$ (service/machine account) process termination (vmtoolsd.exe) \nTime: 2025-08-26 21:07:44 UTC\nHost: STBVADC01\nRisk: HIGH (Z-Score: 41.61)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 41.61 indicates this behavior is 41.6 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Process Terminated events normally involve normal process termination during system operations\n\nInvestigation priorities:\n- Identify what terminated the process\n- Check if process was critical for security\n- Look for subsequent suspicious activities\n- Review process lifetime\n\nAssociated MITRE ATT&CK techniques: T1562, T1489, T1070"
+    },
+    {
+      "rank": 10,
+      "timestamp": "2025-08-26T20:34:08.626000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC01",
+      "event_id": "4634",
+      "z_score": 41.32391357,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account STBVADC01$ (service/machine account) account logoff \nTime: 2025-08-26 20:34:08 UTC\nHost: STBVADC01\nRisk: HIGH (Z-Score: 41.32)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 41.32 indicates this behavior is 41.3 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 11,
+      "timestamp": "2025-08-26T20:31:41.583000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC01",
+      "event_id": "4672",
+      "z_score": 41.30805206,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Special Privileges Assigned - Computer account STBVADC01$ (service/machine account) special privileges assigned \nTime: 2025-08-26 20:31:41 UTC\nHost: STBVADC01\nRisk: HIGH (Z-Score: 41.31)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 41.31 indicates this behavior is 41.3 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Special Privileges Assigned events normally involve administrative accounts receiving expected privileges\n\nInvestigation priorities:\n- Verify if privilege assignment was authorized\n- Check who granted the privileges\n- Review subsequent activities with elevated privileges\n- Correlate with change management records\n\nAssociated MITRE ATT&CK techniques: T1078.003, T1068, T1134"
+    },
+    {
+      "rank": 12,
+      "timestamp": "2025-08-26T20:23:41.250000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC01",
+      "event_id": "4689",
+      "z_score": 41.21979904,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Process Terminated - Computer account STBVADC01$ (service/machine account) process termination (svchost.exe) \nTime: 2025-08-26 20:23:41 UTC\nHost: STBVADC01\nRisk: HIGH (Z-Score: 41.22)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 41.22 indicates this behavior is 41.2 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Process Terminated events normally involve normal process termination during system operations\n\nInvestigation priorities:\n- Identify what terminated the process\n- Check if process was critical for security\n- Look for subsequent suspicious activities\n- Review process lifetime\n\nAssociated MITRE ATT&CK techniques: T1562, T1489, T1070"
+    },
+    {
+      "rank": 13,
+      "timestamp": "2025-08-26T23:24:28.017000000Z",
+      "username": "LOCAL SERVICE",
+      "hostname": "STBVADC05",
+      "event_id": "4689",
+      "z_score": 41.18442154,
+      "cluster": "Critical_User_Breach",
+      "account_type": "User",
+      "source_ip": "",
+      "detailed_description": "Event: Process Terminated - System service account (LOCAL SERVICE) process termination (WmiPrvSE.exe) \nTime: 2025-08-26 23:24:28 UTC\nHost: STBVADC05\nRisk: HIGH (Z-Score: 41.18)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: High-confidence indicators of user account compromise - Strong evidence of unauthorized access or malicious activity\n\nWhy this is suspicious:\n- Z-score of 41.18 indicates this behavior is 41.2 standard deviations from normal\n- Classified as \"Critical_User_Breach\" suggesting high-confidence indicators of user account compromise\n- Process Terminated events normally involve normal process termination during system operations\n\nInvestigation priorities:\n- Identify what terminated the process\n- Check if process was critical for security\n- Look for subsequent suspicious activities\n- Review process lifetime\n\nAssociated MITRE ATT&CK techniques: T1562, T1489, T1070"
+    },
+    {
+      "rank": 14,
+      "timestamp": "2025-08-26T13:18:12.064000000Z",
+      "username": "LOCAL SERVICE",
+      "hostname": "STBVDRADC01",
+      "event_id": "4689",
+      "z_score": 41.0743103,
+      "cluster": "Critical_User_Breach",
+      "account_type": "User",
+      "source_ip": "",
+      "detailed_description": "Event: Process Terminated - System service account (LOCAL SERVICE) process termination (taskhostw.exe) \nTime: 2025-08-26 13:18:12 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 41.07)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: High-confidence indicators of user account compromise - Strong evidence of unauthorized access or malicious activity\n\nWhy this is suspicious:\n- Z-score of 41.07 indicates this behavior is 41.1 standard deviations from normal\n- Classified as \"Critical_User_Breach\" suggesting high-confidence indicators of user account compromise\n- Process Terminated events normally involve normal process termination during system operations\n\nInvestigation priorities:\n- Identify what terminated the process\n- Check if process was critical for security\n- Look for subsequent suspicious activities\n- Review process lifetime\n\nAssociated MITRE ATT&CK techniques: T1562, T1489, T1070"
+    },
+    {
+      "rank": 15,
+      "timestamp": "2025-08-26T20:01:23.778000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC02",
+      "event_id": "4624",
+      "z_score": 41.00965881,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "10.7.55.11",
+      "detailed_description": "Event: Successful Account Logon - Computer account STBVADC01$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.55.11)\nTime: 2025-08-26 20:01:23 UTC\nHost: STBVADC02\nRisk: HIGH (Z-Score: 41.01)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 41.01 indicates this behavior is 41.0 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 16,
+      "timestamp": "2025-08-26T19:41:24.409000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC02",
+      "event_id": "4624",
+      "z_score": 40.84428406,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "10.7.55.11",
+      "detailed_description": "Event: Successful Account Logon - Computer account STBVADC01$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.55.11)\nTime: 2025-08-26 19:41:24 UTC\nHost: STBVADC02\nRisk: HIGH (Z-Score: 40.84)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 40.84 indicates this behavior is 40.8 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 17,
+      "timestamp": "2025-08-26T18:35:49.452000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC01",
+      "event_id": "4672",
+      "z_score": 33.56129074,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Special Privileges Assigned - Computer account STBVADC01$ (service/machine account) special privileges assigned \nTime: 2025-08-26 18:35:49 UTC\nHost: STBVADC01\nRisk: HIGH (Z-Score: 33.56)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 33.56 indicates this behavior is 33.6 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Special Privileges Assigned events normally involve administrative accounts receiving expected privileges\n\nInvestigation priorities:\n- Verify if privilege assignment was authorized\n- Check who granted the privileges\n- Review subsequent activities with elevated privileges\n- Correlate with change management records\n\nAssociated MITRE ATT&CK techniques: T1078.003, T1068, T1134"
+    },
+    {
+      "rank": 18,
+      "timestamp": "2025-08-24T13:25:25.997000000Z",
+      "username": "STBVDRADC01$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4672",
+      "z_score": 32.17062378,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Special Privileges Assigned - Computer account STBVDRADC01$ (service/machine account) special privileges assigned \nTime: 2025-08-24 13:25:25 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 32.17)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 32.17 indicates this behavior is 32.2 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Special Privileges Assigned events normally involve administrative accounts receiving expected privileges\n\nInvestigation priorities:\n- Verify if privilege assignment was authorized\n- Check who granted the privileges\n- Review subsequent activities with elevated privileges\n- Correlate with change management records\n\nAssociated MITRE ATT&CK techniques: T1078.003, T1068, T1134"
+    },
+    {
+      "rank": 19,
+      "timestamp": "2025-08-26T14:45:51.633000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC01",
+      "event_id": "4624",
+      "z_score": 31.62789726,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "10.7.55.11",
+      "detailed_description": "Event: Successful Account Logon - Computer account STBVADC01$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.55.11)\nTime: 2025-08-26 14:45:51 UTC\nHost: STBVADC01\nRisk: HIGH (Z-Score: 31.63)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 31.63 indicates this behavior is 31.6 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 20,
+      "timestamp": "2025-08-26T14:30:37.103000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC01",
+      "event_id": "4672",
+      "z_score": 31.4592514,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Special Privileges Assigned - Computer account STBVADC01$ (service/machine account) special privileges assigned \nTime: 2025-08-26 14:30:37 UTC\nHost: STBVADC01\nRisk: HIGH (Z-Score: 31.46)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 31.46 indicates this behavior is 31.5 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Special Privileges Assigned events normally involve administrative accounts receiving expected privileges\n\nInvestigation priorities:\n- Verify if privilege assignment was authorized\n- Check who granted the privileges\n- Review subsequent activities with elevated privileges\n- Correlate with change management records\n\nAssociated MITRE ATT&CK techniques: T1078.003, T1068, T1134"
+    },
+    {
+      "rank": 21,
+      "timestamp": "2025-08-26T14:13:15.524000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC01",
+      "event_id": "4624",
+      "z_score": 31.30098534,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "10.7.55.11",
+      "detailed_description": "Event: Successful Account Logon - Computer account STBVADC01$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.55.11)\nTime: 2025-08-26 14:13:15 UTC\nHost: STBVADC01\nRisk: HIGH (Z-Score: 31.30)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 31.30 indicates this behavior is 31.3 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 22,
+      "timestamp": "2025-08-26T12:54:38.556000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC01",
+      "event_id": "4624",
+      "z_score": 30.56422806,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "10.7.55.11",
+      "detailed_description": "Event: Successful Account Logon - Computer account STBVADC01$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.55.11)\nTime: 2025-08-26 12:54:38 UTC\nHost: STBVADC01\nRisk: HIGH (Z-Score: 30.56)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 30.56 indicates this behavior is 30.6 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 23,
+      "timestamp": "2025-08-25T13:43:46.700000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 30.56006432,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:43:46 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 30.56)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 30.56 indicates this behavior is 30.6 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 24,
+      "timestamp": "2025-08-26T12:53:50.320000000Z",
+      "username": "STBVADC01$",
+      "hostname": "STBVADC01",
+      "event_id": "4624",
+      "z_score": 30.5545578,
+      "cluster": "Outlier_Extreme_Risk",
+      "account_type": "Computer",
+      "source_ip": "10.7.55.11",
+      "detailed_description": "Event: Successful Account Logon - Computer account STBVADC01$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.55.11)\nTime: 2025-08-26 12:53:50 UTC\nHost: STBVADC01\nRisk: HIGH (Z-Score: 30.55)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Extremely unusual activities requiring immediate attention - Activities that are statistical outliers with very high risk scores\n\nWhy this is suspicious:\n- Z-score of 30.55 indicates this behavior is 30.6 standard deviations from normal\n- Classified as \"Outlier_Extreme_Risk\" suggesting extremely unusual activities requiring immediate attention\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 25,
+      "timestamp": "2025-08-25T13:43:40.684000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 30.5474987,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:43:40 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 30.55)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 30.55 indicates this behavior is 30.5 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 26,
+      "timestamp": "2025-08-25T13:43:19.779000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 30.50422859,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:43:19 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 30.50)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 30.50 indicates this behavior is 30.5 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 27,
+      "timestamp": "2025-08-25T13:43:12.558000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 30.48905182,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:43:12 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 30.49)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 30.49 indicates this behavior is 30.5 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 28,
+      "timestamp": "2025-08-25T13:43:00.810000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 30.46513748,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:43:00 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 30.47)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 30.47 indicates this behavior is 30.5 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 29,
+      "timestamp": "2025-08-25T13:42:47.389000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 30.44192314,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:42:47 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 30.44)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 30.44 indicates this behavior is 30.4 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 30,
+      "timestamp": "2025-08-25T13:42:34.784000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 30.4158535,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:42:34 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 30.42)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 30.42 indicates this behavior is 30.4 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 31,
+      "timestamp": "2025-08-25T13:42:06.471000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 30.35782623,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:42:06 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 30.36)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 30.36 indicates this behavior is 30.4 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 32,
+      "timestamp": "2025-08-25T13:41:38.994000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 30.30197716,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:41:38 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 30.30)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 30.30 indicates this behavior is 30.3 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 33,
+      "timestamp": "2025-08-25T13:41:16.679000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 30.25641632,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:41:16 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 30.26)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 30.26 indicates this behavior is 30.3 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 34,
+      "timestamp": "2025-08-25T13:41:05.275000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 30.23318291,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:41:05 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 30.23)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 30.23 indicates this behavior is 30.2 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 35,
+      "timestamp": "2025-08-25T13:41:01.992000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 30.2265892,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:41:01 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 30.23)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 30.23 indicates this behavior is 30.2 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 36,
+      "timestamp": "2025-08-25T13:40:52.201000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 30.20745087,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:40:52 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 30.21)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 30.21 indicates this behavior is 30.2 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 37,
+      "timestamp": "2025-08-25T13:40:33.942000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 30.17016983,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:40:33 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 30.17)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 30.17 indicates this behavior is 30.2 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 38,
+      "timestamp": "2025-08-25T13:40:02.978000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 30.10859871,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:40:02 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 30.11)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 30.11 indicates this behavior is 30.1 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 39,
+      "timestamp": "2025-08-25T13:39:15.362000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 30.01235771,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:39:15 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 30.01)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 30.01 indicates this behavior is 30.0 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 40,
+      "timestamp": "2025-08-25T13:39:10.273000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 30.0022583,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:39:10 UTC\nHost: STBVDRADC01\nRisk: HIGH (Z-Score: 30.00)\nReason: This behavior is extremely rare and highly suspicious\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 30.00 indicates this behavior is 30.0 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 41,
+      "timestamp": "2025-08-25T13:38:48.117000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 29.95829582,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:38:48 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.96)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 29.96 indicates this behavior is 30.0 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 42,
+      "timestamp": "2025-08-25T13:38:40.632000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 29.94301033,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:38:40 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.94)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 29.94 indicates this behavior is 29.9 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 43,
+      "timestamp": "2025-08-25T13:38:27.154000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 29.91519737,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:38:27 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.92)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 29.92 indicates this behavior is 29.9 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 44,
+      "timestamp": "2025-08-25T13:38:15.556000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 29.89135742,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:38:15 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.89)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 29.89 indicates this behavior is 29.9 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 45,
+      "timestamp": "2025-08-25T13:37:35.436000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 29.81266785,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:37:35 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.81)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 29.81 indicates this behavior is 29.8 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 46,
+      "timestamp": "2025-08-25T13:37:17.427000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 29.77675438,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:37:17 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.78)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 29.78 indicates this behavior is 29.8 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 47,
+      "timestamp": "2025-08-25T13:37:07.969000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 29.76039314,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:37:07 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.76)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 29.76 indicates this behavior is 29.8 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 48,
+      "timestamp": "2025-08-25T13:36:25.508000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 29.67724228,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:36:25 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.68)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 29.68 indicates this behavior is 29.7 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 49,
+      "timestamp": "2025-08-25T13:36:23.541000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 29.67338943,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:36:23 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.67)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 29.67 indicates this behavior is 29.7 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 50,
+      "timestamp": "2025-08-25T13:36:15.560000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 29.65754509,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:36:15 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.66)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 29.66 indicates this behavior is 29.7 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 51,
+      "timestamp": "2025-08-25T13:36:14.923000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 29.6562767,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:36:14 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.66)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 29.66 indicates this behavior is 29.7 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 52,
+      "timestamp": "2025-08-25T13:36:03.353000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 29.63410187,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:36:03 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.63)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 29.63 indicates this behavior is 29.6 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 53,
+      "timestamp": "2025-08-25T13:35:51.142000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 29.61018181,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:35:51 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.61)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 29.61 indicates this behavior is 29.6 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 54,
+      "timestamp": "2025-08-25T13:35:27.021000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 29.56149101,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:35:27 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.56)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 29.56 indicates this behavior is 29.6 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 55,
+      "timestamp": "2025-08-25T13:34:29.142000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 29.44275856,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:34:29 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.44)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 29.44 indicates this behavior is 29.4 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 56,
+      "timestamp": "2025-08-25T13:34:24.391000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 29.43294907,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:34:24 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.43)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 29.43 indicates this behavior is 29.4 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 57,
+      "timestamp": "2025-08-25T13:33:59.283000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 29.38168526,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:33:59 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.38)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 29.38 indicates this behavior is 29.4 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 58,
+      "timestamp": "2025-08-25T13:33:50.650000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 29.36397743,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:33:50 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.36)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 29.36 indicates this behavior is 29.4 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 59,
+      "timestamp": "2025-08-25T13:33:42.123000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 29.34632301,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:33:42 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.35)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 29.35 indicates this behavior is 29.3 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 60,
+      "timestamp": "2025-08-25T13:33:26.035000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 29.31355095,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:33:26 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.31)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 29.31 indicates this behavior is 29.3 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 61,
+      "timestamp": "2025-08-25T13:33:11.742000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 29.2838974,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:33:11 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.28)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 29.28 indicates this behavior is 29.3 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 62,
+      "timestamp": "2025-08-25T13:32:38.696000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 29.21994019,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:32:38 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.22)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 29.22 indicates this behavior is 29.2 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 63,
+      "timestamp": "2025-08-25T13:32:36.434000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 29.21539307,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:32:36 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.22)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 29.22 indicates this behavior is 29.2 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 64,
+      "timestamp": "2025-08-25T13:32:20.268000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 29.18269348,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:32:20 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.18)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 29.18 indicates this behavior is 29.2 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 65,
+      "timestamp": "2025-08-25T13:32:09.784000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 29.16088867,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:32:09 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.16)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 29.16 indicates this behavior is 29.2 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 66,
+      "timestamp": "2025-08-25T13:32:03.926000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 29.14875412,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:32:03 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.15)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 29.15 indicates this behavior is 29.1 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 67,
+      "timestamp": "2025-08-25T13:31:57.784000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 29.13614082,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:31:57 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.14)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 29.14 indicates this behavior is 29.1 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 68,
+      "timestamp": "2025-08-25T13:31:55.348000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 29.13130951,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:31:55 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.13)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 29.13 indicates this behavior is 29.1 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 69,
+      "timestamp": "2025-08-25T13:31:54.241000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 29.12913704,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:31:54 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.13)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 29.13 indicates this behavior is 29.1 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 70,
+      "timestamp": "2025-08-25T13:31:49.627000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 29.11957169,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:31:49 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.12)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 29.12 indicates this behavior is 29.1 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 71,
+      "timestamp": "2025-08-25T13:31:42.494000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 29.10512733,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:31:42 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.11)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 29.11 indicates this behavior is 29.1 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 72,
+      "timestamp": "2025-08-25T13:31:31.948000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 29.08354378,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:31:31 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.08)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 29.08 indicates this behavior is 29.1 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 73,
+      "timestamp": "2025-08-25T13:31:26.829000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 29.0731678,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:31:26 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 29.07)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 29.07 indicates this behavior is 29.1 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 74,
+      "timestamp": "2025-08-25T13:30:34.632000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 28.96702194,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:30:34 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.97)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 28.97 indicates this behavior is 29.0 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 75,
+      "timestamp": "2025-08-25T13:30:17.787000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 28.93253517,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:30:17 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.93)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 28.93 indicates this behavior is 28.9 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 76,
+      "timestamp": "2025-08-25T13:29:45.000000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 28.86545181,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:29:45 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.87)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 28.87 indicates this behavior is 28.9 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 77,
+      "timestamp": "2025-08-25T13:29:33.133000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 28.84107208,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:29:33 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.84)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 28.84 indicates this behavior is 28.8 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 78,
+      "timestamp": "2025-08-25T13:29:19.804000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 28.81401062,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:29:19 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.81)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 28.81 indicates this behavior is 28.8 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 79,
+      "timestamp": "2025-08-25T13:28:50.883000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 28.75579834,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:28:50 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.76)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 28.76 indicates this behavior is 28.8 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 80,
+      "timestamp": "2025-08-25T13:28:46.421000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 28.74658012,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:28:46 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.75)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 28.75 indicates this behavior is 28.7 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 81,
+      "timestamp": "2025-08-25T13:28:19.581000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 28.69169807,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:28:19 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.69)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 28.69 indicates this behavior is 28.7 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 82,
+      "timestamp": "2025-08-25T13:28:16.765000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 28.68579865,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:28:16 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.69)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 28.69 indicates this behavior is 28.7 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 83,
+      "timestamp": "2025-08-25T13:27:44.086000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 28.62014961,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:27:44 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.62)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 28.62 indicates this behavior is 28.6 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 84,
+      "timestamp": "2025-08-25T13:27:42.460000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 28.61689186,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:27:42 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.62)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 28.62 indicates this behavior is 28.6 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 85,
+      "timestamp": "2025-08-25T13:27:28.979000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 28.58950424,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:27:28 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.59)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 28.59 indicates this behavior is 28.6 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 86,
+      "timestamp": "2025-08-25T13:27:26.340000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 28.58404922,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:27:26 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.58)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 28.58 indicates this behavior is 28.6 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 87,
+      "timestamp": "2025-08-25T13:27:16.378000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 28.56347084,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:27:16 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.56)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 28.56 indicates this behavior is 28.6 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 88,
+      "timestamp": "2025-08-25T13:27:15.833000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 28.56236839,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:27:15 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.56)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 28.56 indicates this behavior is 28.6 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 89,
+      "timestamp": "2025-08-25T13:27:08.153000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 28.55122185,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:27:08 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.55)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 28.55 indicates this behavior is 28.6 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 90,
+      "timestamp": "2025-08-25T13:26:54.342000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 28.52291298,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:26:54 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.52)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 28.52 indicates this behavior is 28.5 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 91,
+      "timestamp": "2025-08-25T13:26:45.241000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 28.50312233,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:26:45 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.50)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 28.50 indicates this behavior is 28.5 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 92,
+      "timestamp": "2025-08-25T13:26:38.147000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 28.4875412,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:26:38 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.49)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 28.49 indicates this behavior is 28.5 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 93,
+      "timestamp": "2025-08-25T13:26:27.133000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 28.46413231,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:26:27 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.46)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 28.46 indicates this behavior is 28.5 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 94,
+      "timestamp": "2025-08-25T13:26:26.050000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 28.46179199,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:26:26 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.46)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 28.46 indicates this behavior is 28.5 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 95,
+      "timestamp": "2025-08-25T13:26:20.415000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 28.45004463,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:26:20 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.45)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 28.45 indicates this behavior is 28.5 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 96,
+      "timestamp": "2025-08-25T13:26:13.530000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 28.43529129,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:26:13 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.44)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 28.44 indicates this behavior is 28.4 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 97,
+      "timestamp": "2025-08-25T13:26:03.565000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 28.41462326,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:26:03 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.41)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 28.41 indicates this behavior is 28.4 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 98,
+      "timestamp": "2025-08-25T13:25:54.616000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 28.396492,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:25:54 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.40)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 28.40 indicates this behavior is 28.4 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    },
+    {
+      "rank": 99,
+      "timestamp": "2025-08-25T13:25:07.953000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4624",
+      "z_score": 28.30511284,
+      "cluster": "Suspicious_Authentication_Pattern",
+      "account_type": "Computer",
+      "source_ip": "10.7.56.175",
+      "detailed_description": "Event: Successful Account Logon - Computer account TBQPF45YEK2$ (service/machine account) successful logon (Type 3.0) from internal network (10.7.56.175)\nTime: 2025-08-25 13:25:07 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.31)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Login behaviors that suggest potential credential abuse - Authentication events with unusual timing, frequency, or source patterns\n\nWhy this is suspicious:\n- Z-score of 28.31 indicates this behavior is 28.3 standard deviations from normal\n- Classified as \"Suspicious_Authentication_Pattern\" suggesting login behaviors that suggest potential credential abuse\n- Successful Account Logon events normally involve users logging in during business hours from known locations\n\nInvestigation priorities:\n- Verify logon location against user's normal pattern\n- Check for corresponding logoff events\n- Review source IP geolocation\n- Analyze logon type for appropriateness\n\nAssociated MITRE ATT&CK techniques: T1078, T1110, T1021"
+    },
+    {
+      "rank": 100,
+      "timestamp": "2025-08-25T13:24:35.043000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_id": "4634",
+      "z_score": 28.24041748,
+      "cluster": "Critical_Persistent_Threats",
+      "account_type": "Computer",
+      "source_ip": "",
+      "detailed_description": "Event: Account Logoff - Computer account TBQPF45YEK2$ (service/machine account) account logoff \nTime: 2025-08-25 13:24:35 UTC\nHost: STBVDRADC01\nRisk: MEDIUM-HIGH (Z-Score: 28.24)\nReason: This behavior significantly deviates from normal patterns\n\nContext: Evidence of advanced persistent threat activity - Sustained malicious activity suggesting sophisticated threat actor\n\nWhy this is suspicious:\n- Z-score of 28.24 indicates this behavior is 28.2 standard deviations from normal\n- Classified as \"Critical_Persistent_Threats\" suggesting evidence of advanced persistent threat activity\n- Account Logoff events normally involve normal logoff events at end of work sessions\n\nInvestigation priorities:\n- Correlate with logon events\n- Check session duration\n- Review activity between logon and logoff\n\nAssociated MITRE ATT&CK techniques: T1078, T1021"
+    }
+  ]
+}

@@ -23,6 +23,8 @@ import TopThreats from './components/TopThreats';
 import CriticalEvents from './components/CriticalEvents';
 import LogsViewer from './components/LogsViewer';
 import ForecastingPanel from './components/ForecastingPanel';
+import SystemReportViewer from './components/SystemReportViewer';
+import UserReportViewer from './components/UserReportViewer';
 
 // Utils
 import { loadCyberData } from './utils/dataLoader';
@@ -173,6 +175,28 @@ function App() {
             >
               <BarChart3 className="w-4 h-4" />
               Analytics
+            </button>
+            <button
+              onClick={() => setActiveTab('system-report')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                activeTab === 'system-report'
+                  ? 'bg-gradient-to-r from-red-500/20 to-red-600/20 text-red-400 border border-red-500/30'
+                  : 'text-gray-400 hover:text-white hover:bg-slate-800/30'
+              }`}
+            >
+              <Shield className="w-4 h-4" />
+              System Security
+            </button>
+            <button
+              onClick={() => setActiveTab('user-report')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                activeTab === 'user-report'
+                  ? 'bg-gradient-to-r from-purple-500/20 to-purple-600/20 text-purple-400 border border-purple-500/30'
+                  : 'text-gray-400 hover:text-white hover:bg-slate-800/30'
+              }`}
+            >
+              <Users className="w-4 h-4" />
+              User Security
             </button>
           </div>
         </div>
@@ -370,6 +394,30 @@ function App() {
                   </div>
                 </div>
               </div>
+            </motion.div>
+          )}
+          
+          {activeTab === 'system-report' && (
+            <motion.div
+              key="system-report"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <SystemReportViewer />
+            </motion.div>
+          )}
+          
+          {activeTab === 'user-report' && (
+            <motion.div
+              key="user-report"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <UserReportViewer />
             </motion.div>
           )}
         </AnimatePresence>

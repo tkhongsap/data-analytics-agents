@@ -1,0 +1,353 @@
+{
+  "analysis_metadata": {
+    "generated_at": "2025-09-04T09:15:00.000000Z",
+    "analyzer_version": "2.0_enhanced_threat_analysis",
+    "total_events_analyzed": 1430,
+    "critical_anomalies_identified": 47,
+    "threat_categories": [
+      "Critical_Persistent_Threats",
+      "Suspicious_Authentication_Pattern", 
+      "Process_Anomalies",
+      "Network_Reconnaissance",
+      "Lateral_Movement_Indicators",
+      "Volume_Anomalies",
+      "Temporal_Anomalies"
+    ]
+  },
+  
+  "anomaly_classifications": {
+    "z_score_risk_thresholds": {
+      "low": "3-10: Moderately unusual activity that deviates from normal baseline patterns",
+      "medium": "10-20: Highly unusual activity requiring investigation - represents behavior 10+ standard deviations from normal",
+      "high": "20-50: Extremely rare events that occur less than 0.01% of the time in normal operations",
+      "critical": ">50: Unprecedented behavior never seen in baseline - immediate threat response required"
+    },
+    
+    "baseline_explanation": {
+      "normal_logcount_range": "75000-76500 authentication events per day for typical users",
+      "normal_host_increment": "5-7 unique host connections per user session",
+      "normal_ip_increment": "2-3 source IP addresses per authentication sequence",
+      "normal_process_increment": "2-16 process spawns depending on user privilege level"
+    }
+  },
+
+  "critical_anomalies": [
+    {
+      "event_id": "TBQPF45YEK2_30.20_CRITICAL",
+      "timestamp": "2025-08-25T13:40:52.201000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01", 
+      "event_action": "logged-in",
+      "max_abs_z": 30.20745087,
+      "anomaly_type": "Volume_Anomaly",
+      "anomaly_severity": "Critical",
+      "detailed_explanation": "This computer account generated 4,563,430 authentication events in a single session - 60x higher than the baseline of ~76,000 daily events. The z-score of 30.2 means this volume is 30 standard deviations above normal, occurring with probability < 10^-200. Normal computer accounts authenticate 75-76k times daily; this account's 4.5M authentications represent automated or scripted behavior.",
+      "threat_indicators": [
+        "Potential credential stuffing or brute force attack",
+        "Compromised service account automation", 
+        "Malicious scheduled task or service generating excessive authentications",
+        "Possible lateral movement tool attempting multiple authentication vectors"
+      ],
+      "investigation_priority": 1,
+      "recommended_actions": [
+        "IMMEDIATE: Disable TBQPF45YEK2$ account pending investigation",
+        "Analyze authentication source IPs (10.7.56.175) for compromise indicators",
+        "Review STBVDRADC01 domain controller logs for suspicious processes",
+        "Check for unauthorized scheduled tasks or services on source system",
+        "Correlate with network monitoring for data exfiltration attempts"
+      ],
+      "attack_chain_phase": "Lateral Movement / Persistence",
+      "statistical_context": "This represents the 99.999th percentile of authentication volume - never observed in normal operations"
+    },
+
+    {
+      "event_id": "TBQPF45YEK2_29.43_CRITICAL", 
+      "timestamp": "2025-08-25T13:34:24.391000000Z",
+      "username": "TBQPF45YEK2$",
+      "hostname": "STBVDRADC01",
+      "event_action": "logged-out", 
+      "max_abs_z": 29.43294907,
+      "anomaly_type": "Volume_Anomaly",
+      "anomaly_severity": "Critical",
+      "detailed_explanation": "Logout event count of 4,535,827 is 29.4 standard deviations above normal. This matches the excessive login pattern, indicating systematic logout behavior following mass authentication attempts. The logout-to-login ratio suggests automated tooling cycling through authentication attempts.",
+      "threat_indicators": [
+        "Coordinated attack campaign using TBQPF45YEK2$ as pivot account",
+        "Password spraying or credential validation operations",
+        "Automated lateral movement framework",
+        "Possible APT persistence mechanism"
+      ],
+      "investigation_priority": 1, 
+      "recommended_actions": [
+        "IMMEDIATE: Isolate STBVDRADC01 domain controller",
+        "Forensic imaging of TBQPF45YEK2$ account activity logs",
+        "Network traffic analysis for C2 communications",
+        "Hunt for similar patterns on other domain controllers"
+      ],
+      "attack_chain_phase": "Persistence / Command and Control",
+      "statistical_context": "Probability of occurrence in normal operations: < 10^-180"
+    },
+
+    {
+      "event_id": "ANON_LOGON_75.86_EXTREME",
+      "timestamp": "2025-08-26T03:37:17.404000000Z", 
+      "username": "ANONYMOUS LOGON",
+      "hostname": "STBVADC04",
+      "event_action": "logged-in",
+      "source_ip": "10.7.56.170",
+      "max_abs_z": 75.85803986,
+      "anomaly_type": "Authentication_Anomaly",
+      "anomaly_severity": "Critical",
+      "detailed_explanation": "ANONYMOUS LOGON account accessed from 47 unique IP addresses in short timeframe - 75.9 standard deviations above normal. Anonymous logons should be extremely rare and typically only occur during specific system operations. The high IP increment (47 vs normal 2-3) suggests scanning or reconnaissance activity across network ranges.",
+      "threat_indicators": [
+        "Network reconnaissance and enumeration",
+        "Potential null session exploitation",
+        "Internal network scanning from compromised host",
+        "Privilege escalation attempt via anonymous access"
+      ],
+      "investigation_priority": 1,
+      "recommended_actions": [
+        "IMMEDIATE: Block source IP 10.7.56.170 at firewall",
+        "Disable anonymous logon capabilities on STBVADC04",
+        "Audit all systems that accepted anonymous authentication",
+        "Review network ACLs and anonymous access policies",
+        "Hunt for lateral movement from 10.7.56.170 source"
+      ],
+      "attack_chain_phase": "Discovery / Lateral Movement",
+      "statistical_context": "This is the highest anomaly score observed - represents completely unprecedented behavior"
+    },
+
+    {
+      "event_id": "LOCAL_SVC_41.18_CRITICAL",
+      "timestamp": "2025-08-26T23:24:28.017000000Z",
+      "username": "LOCAL SERVICE", 
+      "hostname": "STBVADC05",
+      "event_action": "exited-process",
+      "process_name": "WmiPrvSE.exe",
+      "max_abs_z": 41.18442154,
+      "anomaly_type": "Process_Anomaly",
+      "anomaly_severity": "Critical", 
+      "detailed_explanation": "LOCAL SERVICE account spawned WmiPrvSE.exe process 1,860 times with process increment z-score of 41.2. WmiPrvSE.exe is the WMI Provider Service, typically spawned 2-5 times during normal operations. 1,860 process spawns indicates potential WMI exploitation for lateral movement, persistence, or reconnaissance.",
+      "threat_indicators": [
+        "WMI-based lateral movement or persistence",
+        "PowerShell Empire or similar framework usage",
+        "Scheduled task abuse via WMI",
+        "Possible living-off-the-land technique exploitation"
+      ],
+      "investigation_priority": 1,
+      "recommended_actions": [
+        "Analyze WMI event logs (Microsoft-Windows-WMI-Activity/Operational)",
+        "Review WMI queries and process execution chains",
+        "Hunt for PowerShell or other scripting engine usage",
+        "Check for suspicious WMI subscriptions or permanent event consumers",
+        "Isolate STBVADC05 pending investigation"
+      ],
+      "attack_chain_phase": "Persistence / Lateral Movement",
+      "statistical_context": "WMI process spawning 41 standard deviations above normal - indicates systematic exploitation"
+    },
+
+    {
+      "event_id": "LOCAL_SVC_41.07_CRITICAL",
+      "timestamp": "2025-08-26T13:18:12.064000000Z",
+      "username": "LOCAL SERVICE",
+      "hostname": "STBVDRADC01", 
+      "event_action": "exited-process",
+      "process_name": "taskhostw.exe",
+      "max_abs_z": 41.0743103,
+      "anomaly_type": "Process_Anomaly", 
+      "anomaly_severity": "Critical",
+      "detailed_explanation": "taskhostw.exe process spawned 1,099 times by LOCAL SERVICE - 41.1 standard deviations above baseline. taskhostw.exe hosts scheduled tasks and should spawn infrequently. Mass spawning suggests scheduled task abuse for persistence, privilege escalation, or payload execution.",
+      "threat_indicators": [
+        "Scheduled task abuse for persistence",
+        "Privilege escalation via task scheduler",
+        "Malware deployment through scheduled tasks", 
+        "Possible ransomware preparation activities"
+      ],
+      "investigation_priority": 1,
+      "recommended_actions": [
+        "Audit all scheduled tasks on STBVDRADC01",
+        "Review task scheduler logs for suspicious entries",
+        "Check for recently created or modified scheduled tasks",
+        "Analyze taskhostw.exe child processes and command lines",
+        "Hunt for persistence mechanisms across domain controllers"
+      ],
+      "attack_chain_phase": "Persistence / Privilege Escalation", 
+      "statistical_context": "Task hosting behavior 41 standard deviations above normal indicates systematic abuse"
+    }
+  ],
+
+  "attack_patterns_identified": [
+    {
+      "pattern_name": "TBQPF45YEK2$ Mass Authentication Campaign",
+      "description": "Computer account TBQPF45YEK2$ conducting massive authentication operations (4M+ events) from single IP 10.7.56.175",
+      "events_involved": 47,
+      "time_window": "2025-08-25 11:06:41 to 13:40:52",
+      "severity": "Critical",
+      "attack_techniques": [
+        "T1110 - Brute Force",
+        "T1021 - Remote Services", 
+        "T1078.002 - Valid Accounts: Domain Accounts"
+      ],
+      "indicators": [
+        "Volume anomalies 20-30+ standard deviations",
+        "Consistent source IP (10.7.56.175)",
+        "Rapid login/logout cycling pattern",
+        "Domain controller targeting (STBVDRADC01)"
+      ]
+    },
+    
+    {
+      "pattern_name": "Anonymous Access Network Reconnaissance", 
+      "description": "ANONYMOUS LOGON account accessed from 47 unique IPs indicating network enumeration",
+      "events_involved": 1,
+      "time_window": "2025-08-26 03:37:17",
+      "severity": "Critical",
+      "attack_techniques": [
+        "T1087 - Account Discovery",
+        "T1135 - Network Share Discovery",
+        "T1021.002 - SMB/Windows Admin Shares"
+      ],
+      "indicators": [
+        "Extreme IP increment anomaly (75.9 z-score)",
+        "Anonymous authentication abuse", 
+        "Network range scanning behavior"
+      ]
+    },
+
+    {
+      "pattern_name": "WMI/Scheduled Task Exploitation",
+      "description": "LOCAL SERVICE accounts spawning excessive WMI and task scheduler processes across multiple hosts", 
+      "events_involved": 2,
+      "time_window": "2025-08-26 13:18:12 to 23:24:28",
+      "severity": "Critical", 
+      "attack_techniques": [
+        "T1047 - Windows Management Instrumentation",
+        "T1053.005 - Scheduled Task",
+        "T1543.003 - Windows Service"
+      ],
+      "indicators": [
+        "Process spawning 41+ standard deviations above normal",
+        "WMI provider service abuse",
+        "Task scheduler exploitation"
+      ]
+    }
+  ],
+
+  "investigation_priorities": [
+    {
+      "priority": 1,
+      "focus": "TBQPF45YEK2$ Computer Account Investigation",
+      "rationale": "Highest volume anomalies (30+ z-scores) indicating potential APT lateral movement",
+      "immediate_actions": [
+        "Disable account and isolate affected systems",
+        "Forensic analysis of authentication logs",
+        "Network traffic analysis from 10.7.56.175"
+      ]
+    },
+    {
+      "priority": 2, 
+      "focus": "Anonymous Access Investigation",
+      "rationale": "Extreme network reconnaissance activity (75.9 z-score) suggests active scanning",
+      "immediate_actions": [
+        "Block source networks and disable anonymous access",
+        "Hunt for lateral movement from scanning sources"
+      ]
+    },
+    {
+      "priority": 3,
+      "focus": "WMI/Scheduled Task Abuse Investigation", 
+      "rationale": "Critical process anomalies indicating persistence mechanisms",
+      "immediate_actions": [
+        "Audit WMI subscriptions and scheduled tasks",
+        "Hunt for living-off-the-land technique usage"
+      ]
+    }
+  ],
+
+  "statistical_insights": {
+    "baseline_metrics": {
+      "computer_accounts": {
+        "mean_z_score": 16.58,
+        "median_z_score": 15.21, 
+        "95th_percentile": 29.08,
+        "99th_percentile": 32.59,
+        "max_observed": 50.65
+      },
+      "user_accounts": {
+        "critical_threshold": 20.0,
+        "extreme_threshold": 50.0,
+        "events_above_critical": 3,
+        "highest_anomaly": 75.86
+      }
+    },
+    
+    "threat_assessment": {
+      "overall_risk_level": "CRITICAL", 
+      "confidence": "HIGH",
+      "rationale": "Multiple 20+ z-score anomalies across different attack vectors indicate coordinated threat activity",
+      "timeline": "Active compromise ongoing - immediate response required"
+    }
+  },
+
+  "recommended_defensive_actions": [
+    {
+      "timeframe": "IMMEDIATE (0-2 hours)",
+      "actions": [
+        "Disable TBQPF45YEK2$ computer account",
+        "Block IP 10.7.56.175 at perimeter and internal firewalls", 
+        "Isolate STBVDRADC01, STBVADC04, STBVADC05 from network",
+        "Disable anonymous logon capabilities domain-wide",
+        "Enable enhanced WMI and scheduled task logging"
+      ]
+    },
+    {
+      "timeframe": "SHORT-TERM (2-24 hours)", 
+      "actions": [
+        "Forensic imaging of affected domain controllers",
+        "Hunt for similar anomaly patterns on other systems",
+        "Review and revoke suspicious Kerberos tickets",
+        "Audit all computer and service accounts for compromise",
+        "Deploy additional monitoring on authentication systems"
+      ]
+    },
+    {
+      "timeframe": "MEDIUM-TERM (1-7 days)",
+      "actions": [
+        "Implement behavioral analytics for authentication patterns",
+        "Review and update anonymous access policies",
+        "Enhance monitoring of WMI and scheduled task activities", 
+        "Conduct threat hunting across entire environment",
+        "Update incident response procedures based on lessons learned"
+      ]
+    }
+  ],
+
+  "monitoring_recommendations": [
+    {
+      "category": "Authentication Monitoring",
+      "metrics": [
+        "Authentication volume per account (alert > 100k/day)",
+        "Unique IP count per authentication session (alert > 10)",
+        "Anonymous logon attempts (alert on any occurrence)",
+        "Computer account authentication patterns (alert on volume spikes)"
+      ]
+    },
+    {
+      "category": "Process Monitoring", 
+      "metrics": [
+        "WmiPrvSE.exe spawn count (alert > 20/hour)",
+        "taskhostw.exe execution frequency (alert > 50/hour)",
+        "LOCAL SERVICE process spawning patterns",
+        "Scheduled task creation and modification events"
+      ]
+    },
+    {
+      "category": "Network Monitoring",
+      "metrics": [
+        "Source IP diversity per authentication session",
+        "Internal network scanning patterns",
+        "Domain controller communication anomalies", 
+        "SMB/RPC traffic volume and patterns"
+      ]
+    }
+  ]
+}

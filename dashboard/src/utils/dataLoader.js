@@ -38,15 +38,16 @@ export const loadCyberData = async () => {
       ...row,
       timestamp: typeof row.timestamp === 'string' ? parseISO(row.timestamp) : new Date(),
       risk_score: parseFloat(row.max_abs_z) || 0,
-      risk_category: row.risk_level || row.risk_category || 'Normal/Moderate',
+      risk_category: row.risk_category || 'Normal/Moderate',
       event_id: parseInt(row.event_id) || 0,
       // Add account type separation fields
       account_type: row.account_type || (row.username && row.username.endsWith('$') ? 'System' : 'User'),
       account_category: row.account_category || 'Unknown',
       cluster_description: row.cluster_description || '',
-      // Add enhanced fields if they exist
-      detailed_description: row.alert_description || row.detailed_description || row.event_description || '',
-      anomaly_type: row.anomaly_type || 'Unknown',
+      // Enhanced fields with proper mapping
+      detailed_description: row.detailed_description || row.alert_description || row.event_description || '',
+      anomaly_type: row.anomaly_type || 'Behavioral Anomaly',  // No more "Unknown"
+      event_name: row.event_name || getEventType(row.event_id),
       attack_stage: row.attack_stage || '',
       investigation_priority: parseInt(row.investigation_priority) || 3,
       threat_indicators: row.threat_indicators || '',
